@@ -1,251 +1,234 @@
-# Student Management System
+# Student Management System 🎓
 
-A Spring Boot application with role-based access control (RBAC) for managing students, teachers, and courses.
+A comprehensive Spring Boot application with role-based access control for managing students, teachers, courses, departments, and enrollments.
 
-## Features
+## 🚀 Features
 
-- **Authentication & Authorization**: JWT-based authentication with role-based access control
-- **Three Roles**: Admin, Teacher, Student
-- **CRUD Operations**: Full CRUD for students, teachers, and courses
-- **Database**: PostgreSQL with Liquibase migrations
-- **Containerization**: Docker and Docker Compose support
+- **JWT Authentication** - Secure token-based authentication
+- **Role-Based Access Control** - Admin, Teacher, and Student roles with different permissions
+- **Student Management** - Complete CRUD operations for student profiles
+- **Teacher Management** - Manage teacher accounts and assignments
+- **Course Management** - Create courses, assign teachers, track enrollments
+- **Department Management** - Organize departments with course associations
+- **Enrollment System** - Students can enroll/drop courses
+- **View Classmates** - Students can see their department peers
+- **Multi-Page Web UI** - Responsive HTML interface with dark teal theme
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- Spring Boot 4.0.2
-- Spring Security with JWT
-- Spring Data JPA
-- PostgreSQL
-- Liquibase (Database Migrations)
+| Component         | Technology                  |
+| ----------------- | --------------------------- |
+| Backend Framework | Spring Boot 4.0.2           |
+| Security          | Spring Security + JWT       |
+| Database          | PostgreSQL 16               |
+| ORM               | Spring Data JPA + Hibernate |
+| Migrations        | Liquibase                   |
+| Build Tool        | Maven                       |
+| Container         | Docker + Docker Compose     |
+| Frontend          | HTML/CSS/JavaScript         |
+
+## 📋 Prerequisites
+
+- Java 21 or higher
 - Docker & Docker Compose
-- Lombok
+- Maven 3.6+ (or use included wrapper)
 
-## Getting Started
+## 🏃 Quick Start
 
-### Prerequisites
+### Option 1: Development Mode
 
-- Java 17+
-- Docker & Docker Compose
-- Maven (or use the included Maven wrapper)
-
-### Running with Docker Compose (Development)
-
-1. Start PostgreSQL:
 ```bash
+# Start PostgreSQL
 docker-compose up -d
-```
 
-2. Run the application:
-```bash
+# Run application (Windows)
+mvnw.cmd spring-boot:run
+
+# Run application (Linux/Mac)
 ./mvnw spring-boot:run
 ```
 
-### Running Full Stack with Docker (Production)
+Application runs on: **http://localhost:9090**
+
+### Option 2: Production Mode (Docker)
 
 ```bash
 docker-compose -f docker-compose.prod.yaml up --build
 ```
 
-## Default Admin Credentials
+## 🔐 Default Credentials
 
-- **Username**: admin
-- **Password**: admin123
+| Role  | Username | Password   |
+| ----- | -------- | ---------- |
+| Admin | `admin`  | `admin123` |
 
-## API Endpoints
+## 📡 API Endpoints
 
 ### Authentication (Public)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Login and get JWT token |
-| POST | `/api/auth/register` | Register a new user |
+- `POST /api/auth/login` - Login and receive JWT token
+- `POST /api/auth/register` - Register new user account
 
-### Admin Endpoints (ROLE_ADMIN only)
+### Admin Endpoints (ROLE_ADMIN)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/admin/users` | Get all users |
-| GET | `/api/admin/users/{id}` | Get user by ID |
-| PUT | `/api/admin/users/{id}` | Update user |
-| DELETE | `/api/admin/users/{id}` | Delete user |
-| GET | `/api/admin/students` | Get all students |
-| POST | `/api/admin/students` | Create student |
-| PUT | `/api/admin/students/{id}` | Update student |
-| DELETE | `/api/admin/students/{id}` | Delete student |
-| GET | `/api/admin/teachers` | Get all teachers |
-| POST | `/api/admin/teachers` | Create teacher |
-| PUT | `/api/admin/teachers/{id}` | Update teacher |
-| DELETE | `/api/admin/teachers/{id}` | Delete teacher |
-| GET | `/api/admin/courses` | Get all courses |
-| POST | `/api/admin/courses` | Create course |
-| PUT | `/api/admin/courses/{id}` | Update course |
-| DELETE | `/api/admin/courses/{id}` | Delete course |
+**Users**
 
-### Teacher Endpoints (ROLE_ADMIN, ROLE_TEACHER)
+- `GET /api/admin/users` - List all users
+- `POST /api/admin/users` - Create new user
+- `PUT /api/admin/users/{id}` - Update user
+- `DELETE /api/admin/users/{id}` - Delete user
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/teacher/students` | View all students |
-| GET | `/api/teacher/students/{id}` | View student by ID |
-| PUT | `/api/teacher/students/{id}` | Update student (grades) |
-| GET | `/api/teacher/courses` | View all courses |
-| GET | `/api/teacher/my-courses` | View own courses |
-| POST | `/api/teacher/courses` | Create course |
-| PUT | `/api/teacher/courses/{id}` | Update course |
-| DELETE | `/api/teacher/courses/{id}` | Delete course |
+**Students**
 
-### Student Endpoints (ROLE_ADMIN, ROLE_TEACHER, ROLE_STUDENT)
+- `GET /api/admin/students` - List all students
+- `POST /api/admin/students` - Create student with credentials
+- `PUT /api/admin/students/{id}` - Update student
+- `DELETE /api/admin/students/{id}` - Delete student
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/student/profile` | View own profile |
-| PUT | `/api/student/profile` | Update own profile |
-| GET | `/api/student/courses` | View all courses |
-| GET | `/api/student/courses/{id}` | View course by ID |
+**Teachers**
 
-## API Usage Examples
+- `GET /api/admin/teachers` - List all teachers
+- `POST /api/admin/teachers` - Create teacher with credentials
+- `PUT /api/admin/teachers/{id}` - Update teacher
+- `DELETE /api/admin/teachers/{id}` - Delete teacher
+
+**Courses**
+
+- `GET /api/admin/courses` - List all courses
+- `POST /api/admin/courses` - Create course
+- `PUT /api/admin/courses/{id}` - Update course
+- `DELETE /api/admin/courses/{id}` - Delete course
+
+**Departments**
+
+- `GET /api/admin/departments` - List all departments
+- `POST /api/admin/departments` - Create department
+- `PUT /api/admin/departments/{id}` - Update department
+- `DELETE /api/admin/departments/{id}` - Delete department
+
+### Teacher Endpoints (ROLE_TEACHER)
+
+- `GET /api/teacher/students` - View all students (Read-only)
+- `GET /api/teacher/courses` - View courses (View-only, no edit)
+- `GET /api/teacher/my-courses` - View assigned courses
+
+### Student Endpoints (ROLE_STUDENT)
+
+- `GET /api/student/profile` - View own profile
+- `PUT /api/student/profile` - Update own profile
+- `GET /api/student/courses` - View available courses
+- `POST /api/student/enroll/{courseId}` - Enroll in course
+- `DELETE /api/student/drop/{courseId}` - Drop course
+- `GET /api/student/my-enrollments` - View enrolled courses
+- `GET /api/student/department-students` - View classmates
+
+## 🧪 API Usage Example
 
 ### Login
+
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:9090/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
+  -d '{"username":"admin","password":"admin123"}'
 ```
 
-Response:
+**Response:**
+
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "type": "Bearer",
+  "token": "eyJhbGciOiJIUzUxMiJ9...",
   "id": 1,
   "username": "admin",
-  "email": "admin@studentms.com",
   "roles": ["ROLE_ADMIN"]
 }
 ```
 
-### Create a Student (Admin)
+### Create Student (Admin Only)
+
 ```bash
-curl -X POST http://localhost:8080/api/admin/students \
+curl -X POST http://localhost:9090/api/admin/students \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{
-    "username": "john.doe",
-    "email": "john.doe@example.com",
-    "password": "password123",
-    "firstName": "John",
-    "lastName": "Doe",
-    "studentId": "STU001",
-    "department": "Computer Science",
-    "semester": 5,
-    "enrollmentDate": "2023-01-15",
-    "gpa": 3.75
+    "username":"john.doe",
+    "email":"john@example.com",
+    "password":"pass123",
+    "firstName":"John",
+    "lastName":"Doe",
+    "studentId":"STU001",
+    "department":"CSE",
+    "gpa":3.75
   }'
 ```
 
-### Create a Teacher (Admin)
-```bash
-curl -X POST http://localhost:8080/api/admin/teachers \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "username": "jane.smith",
-    "email": "jane.smith@example.com",
-    "password": "password123",
-    "firstName": "Jane",
-    "lastName": "Smith",
-    "employeeId": "EMP001",
-    "department": "Computer Science",
-    "designation": "Professor",
-    "joiningDate": "2020-08-01"
-  }'
-```
-
-### Create a Course (Admin/Teacher)
-```bash
-curl -X POST http://localhost:8080/api/admin/courses \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "courseCode": "CS101",
-    "courseName": "Introduction to Programming",
-    "description": "Basic programming concepts",
-    "credits": 3,
-    "teacherId": 1
-  }'
-```
-
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 src/main/java/com/example/StudentMS/
-├── config/
-│   └── SecurityConfig.java
-├── controller/
-│   ├── AdminController.java
-│   ├── AuthController.java
-│   ├── StudentController.java
-│   └── TeacherController.java
-├── dto/
-│   ├── CourseDTO.java
-│   ├── CreateStudentRequest.java
-│   ├── CreateTeacherRequest.java
-│   ├── JwtResponse.java
-│   ├── LoginRequest.java
-│   ├── MessageResponse.java
-│   ├── RegisterRequest.java
-│   ├── StudentDTO.java
-│   ├── TeacherDTO.java
-│   └── UserDTO.java
-├── entity/
-│   ├── Course.java
-│   ├── Role.java
-│   ├── Student.java
-│   ├── Teacher.java
-│   └── User.java
-├── exception/
-│   └── GlobalExceptionHandler.java
-├── repository/
-│   ├── CourseRepository.java
-│   ├── RoleRepository.java
-│   ├── StudentRepository.java
-│   ├── TeacherRepository.java
-│   └── UserRepository.java
-├── security/
-│   ├── CustomUserDetailsService.java
-│   ├── JwtAuthenticationEntryPoint.java
-│   ├── JwtAuthenticationFilter.java
-│   └── JwtTokenProvider.java
-├── service/
-│   ├── AuthService.java
-│   ├── CourseService.java
-│   ├── StudentService.java
-│   ├── TeacherService.java
-│   └── UserService.java
-└── StudentMsApplication.java
+├── config/                     # Security & app configuration
+├── controller/                 # REST API endpoints (5 controllers)
+├── dto/                        # Data Transfer Objects (12 DTOs)
+├── entity/                     # JPA entities (7 tables)
+├── exception/                  # Global exception handler
+├── repository/                 # Data access layer (7 repositories)
+├── security/                   # JWT authentication components
+├── service/                    # Business logic (7 services)
+└── util/                       # Helper utilities
+
+src/main/resources/
+├── application.yaml            # App configuration
+├── db/changelog/               # Liquibase migrations (10 files)
+└── static/                     # Frontend HTML pages (12 pages)
 ```
 
-## Database Migrations
+**See [explain.md](explain.md) for detailed technical documentation.**
 
-Liquibase migrations are located in `src/main/resources/db/changelog/changes/`:
+## 🗄️ Database Schema
 
-1. `001-create-users-table.yaml` - Users table
-2. `002-create-roles-table.yaml` - Roles table
-3. `003-create-user-roles-table.yaml` - User-Roles junction table
-4. `004-create-students-table.yaml` - Students table
-5. `005-create-teachers-table.yaml` - Teachers table
-6. `006-create-courses-table.yaml` - Courses table
-7. `007-insert-default-roles.yaml` - Default roles (ADMIN, TEACHER, STUDENT)
-8. `008-insert-admin-user.yaml` - Default admin user
+**Tables:**
 
-## Role-Based Access Control
+- `users` - User accounts with authentication
+- `roles` - Role definitions (ADMIN, TEACHER, STUDENT)
+- `user_roles` - Many-to-many user-role mapping
+- `students` - Student profiles linked to users
+- `teachers` - Teacher profiles linked to users
+- `courses` - Course information with teacher assignment
+- `departments` - Department organization
+- `enrollments` - Student course enrollments
 
-| Role | Access Level |
-|------|--------------|
-| ADMIN | Full access to all endpoints |
-| TEACHER | Can view/update students, manage courses |
-| STUDENT | Can view own profile and courses |
+**Migrations managed by Liquibase** - See `src/main/resources/db/changelog/changes/`
 
-## License
+## 🔒 Role-Based Access Summary
+
+| Role        | Permissions                                                                  |
+| ----------- | ---------------------------------------------------------------------------- |
+| **ADMIN**   | Full CRUD on all resources (users, students, teachers, courses, departments) |
+| **TEACHER** | View students, view courses (read-only), manage own profile                  |
+| **STUDENT** | Enroll in courses, view classmates, manage own profile                       |
+
+## 📱 Web Interface
+
+Access the web UI at **http://localhost:9090** after starting the application.
+
+**Available Pages:**
+
+- Login (`/login.html`)
+- Dashboard (`/dashboard.html`)
+- Students Management (`/students.html`)
+- Teachers Management (`/teachers.html`)
+- Courses Management (`/courses.html`)
+- Departments Management (`/departments.html`)
+- Users Management (`/users.html`)
+- Profile Management (`/profile.html`)
+- My Enrollments (`/my-enrollments.html`)
+- Classmates View (`/classmates.html`)
+
+## 🤝 Contributing
+
+This project was developed as part of a Software Engineering lab course.
+
+## 📄 License
 
 This project is for educational purposes.
+
+---
