@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-courses-table
+      author: system
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: course_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: course_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: credits
+                  type: INT
+              - column:
+                  name: teacher_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            baseTableName: courses
+            baseColumnNames: teacher_id
+            referencedTableName: teachers
+            referencedColumnNames: id
+            constraintName: fk_courses_teacher
+            onDelete: SET NULL

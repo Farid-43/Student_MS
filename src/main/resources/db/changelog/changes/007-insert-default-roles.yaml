@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-insert-default-roles
+      author: system
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_ADMIN
+              - column:
+                  name: description
+                  value: Administrator with full access
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_TEACHER
+              - column:
+                  name: description
+                  value: Teacher with course management access
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_STUDENT
+              - column:
+                  name: description
+                  value: Student with limited access

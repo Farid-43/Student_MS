@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Student MS</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background: #0f0f23;
+        min-height: 100vh;
+        color: #e2e8f0;
+      }
+      .navbar {
+        background: linear-gradient(90deg, #1a1a3e 0%, #0d1b2a 100%);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .navbar h1 {
+        font-size: 1.4em;
+        background: linear-gradient(135deg, #00ffc8, #00b4d8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+      }
+      .navbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .role-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .role-admin {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        color: #fff;
+      }
+      .role-teacher {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #000;
+      }
+      .role-student {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+      }
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: #f43f5e;
+      }
+      .container {
+        display: flex;
+        min-height: calc(100vh - 65px);
+      }
+      .sidebar {
+        width: 240px;
+        background: #1a1a3e;
+        padding: 25px 0;
+        border-right: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 25px;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 14px;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background: rgba(0, 255, 200, 0.05);
+        color: #00ffc8;
+        border-right: 3px solid #00ffc8;
+      }
+      .sidebar .section {
+        padding: 20px 25px 10px;
+        color: #475569;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .main {
+        flex: 1;
+        padding: 30px;
+        background: #0f0f23;
+      }
+      .welcome-box {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 200, 0.1) 0%,
+          rgba(0, 180, 216, 0.05) 100%
+        );
+        border: 1px solid rgba(0, 255, 200, 0.2);
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+      }
+      .welcome-box h2 {
+        color: #00ffc8;
+        margin-bottom: 8px;
+        font-size: 1.6em;
+      }
+      .welcome-box p {
+        color: #94a3b8;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: #1a1a3e;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 16px;
+        text-align: center;
+        transition: all 0.3s;
+      }
+      .stat-card:hover {
+        border-color: rgba(0, 255, 200, 0.3);
+        transform: translateY(-5px);
+      }
+      .stat-card .icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+      }
+      .stat-card h3 {
+        font-size: 2.2em;
+        color: #00ffc8;
+        margin-bottom: 5px;
+      }
+      .stat-card p {
+        color: #64748b;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .quick-links h3 {
+        color: #e2e8f0;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+      }
+      .links-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+      .link-card {
+        background: #1a1a3e;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .link-card:hover {
+        border-color: rgba(0, 255, 200, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .link-card .icon {
+        font-size: 2em;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(0, 255, 200, 0.1);
+      }
+      .link-card h4 {
+        color: #e2e8f0;
+        margin-bottom: 5px;
+      }
+      .link-card p {
+        color: #64748b;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1 onclick="location.href = '/dashboard.html'">🎓 Student MS</h1>
+      <div class="user-info">
+        <span id="userName" style="color: #94a3b8"></span>
+        <span id="userRole" class="role-badge"></span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="sidebar" id="sidebar"></div>
+      <div class="main">
+        <div class="welcome-box">
+          <h2>👋 Welcome, <span id="welcomeName"></span>!</h2>
+          <p id="welcomeDesc">Loading your dashboard...</p>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="quick-links">
+          <h3>⚡ Quick Actions</h3>
+          <div class="links-grid" id="linksGrid"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      if (!token || !user) location.href = "/login.html";
+      const roles = user.roles || [];
+      const isAdmin = roles.includes("ROLE_ADMIN");
+      const isTeacher = roles.includes("ROLE_TEACHER");
+      const isStudent = roles.includes("ROLE_STUDENT");
+
+      document.getElementById("userName").textContent = user.username;
+      document.getElementById("welcomeName").textContent = user.username;
+      const roleEl = document.getElementById("userRole");
+      if (isAdmin) {
+        roleEl.textContent = "Admin";
+        roleEl.classList.add("role-admin");
+        document.getElementById("welcomeDesc").textContent =
+          "Full administrative access to the system.";
+      } else if (isTeacher) {
+        roleEl.textContent = "Teacher";
+        roleEl.classList.add("role-teacher");
+        document.getElementById("welcomeDesc").textContent =
+          "Manage courses, view students, and update grades.";
+      } else {
+        roleEl.textContent = "Student";
+        roleEl.classList.add("role-student");
+        document.getElementById("welcomeDesc").textContent =
+          "View profile, enroll in courses, and connect with classmates.";
+      }
+
+      let sidebarHTML =
+        '<a href="/dashboard.html" class="active">📊 Dashboard</a>';
+      if (isAdmin) {
+        sidebarHTML += '<div class="section">Management</div>';
+        sidebarHTML += '<a href="/students.html">🎓 Students</a>';
+        sidebarHTML += '<a href="/teachers.html">👨‍🏫 Teachers</a>';
+        sidebarHTML += '<a href="/courses.html">📚 Courses</a>';
+        sidebarHTML += '<a href="/departments.html">🏛️ Departments</a>';
+        sidebarHTML += '<a href="/users.html">👥 Users</a>';
+      } else if (isTeacher) {
+        sidebarHTML += '<div class="section">Teaching</div>';
+        sidebarHTML += '<a href="/students.html">🎓 Students</a>';
+        sidebarHTML += '<a href="/courses.html">📚 My Courses</a>';
+        sidebarHTML += '<a href="/departments.html">🏛️ Departments</a>';
+      } else {
+        sidebarHTML += '<div class="section">Academic</div>';
+        sidebarHTML += '<a href="/courses.html">📚 Courses</a>';
+        sidebarHTML += '<a href="/my-enrollments.html">📋 My Enrollments</a>';
+        sidebarHTML += '<a href="/classmates.html">👥 Classmates</a>';
+      }
+      sidebarHTML += '<div class="section">Account</div>';
+      sidebarHTML += '<a href="/profile.html">👤 Profile</a>';
+      document.getElementById("sidebar").innerHTML = sidebarHTML;
+
+      async function api(url) {
+        const res = await fetch(url, {
+          headers: { Authorization: "Bearer " + token },
+        });
+        if (res.status === 401) {
+          logout();
+          return null;
+        }
+        if (!res.ok) return [];
+        return res.json();
+      }
+
+      async function loadDashboard() {
+        let stats = [],
+          links = [];
+        if (isAdmin) {
+          const [users, students, teachers, courses, depts] = await Promise.all(
+            [
+              api("/api/admin/users"),
+              api("/api/admin/students"),
+              api("/api/admin/teachers"),
+              api("/api/admin/courses"),
+              api("/api/admin/departments"),
+            ],
+          );
+          stats = [
+            { icon: "👥", count: users?.length || 0, label: "Users" },
+            { icon: "🎓", count: students?.length || 0, label: "Students" },
+            { icon: "👨‍🏫", count: teachers?.length || 0, label: "Teachers" },
+            { icon: "📚", count: courses?.length || 0, label: "Courses" },
+            { icon: "🏛️", count: depts?.length || 0, label: "Departments" },
+          ];
+          links = [
+            {
+              href: "/students.html",
+              icon: "🎓",
+              title: "Manage Students",
+              desc: "Add, edit, delete student records",
+            },
+            {
+              href: "/courses.html",
+              icon: "📚",
+              title: "Manage Courses",
+              desc: "Full course management with teacher assignment",
+            },
+            {
+              href: "/departments.html",
+              icon: "🏛️",
+              title: "Manage Departments",
+              desc: "Create and organize departments",
+            },
+            {
+              href: "/users.html",
+              icon: "👥",
+              title: "Manage Users",
+              desc: "User accounts and permissions",
+            },
+          ];
+        } else if (isTeacher) {
+          const [students, courses] = await Promise.all([
+            api("/api/teacher/students"),
+            api("/api/teacher/my-courses"),
+          ]);
+          stats = [
+            { icon: "🎓", count: students?.length || 0, label: "Students" },
+            { icon: "📚", count: courses?.length || 0, label: "My Courses" },
+          ];
+          links = [
+            {
+              href: "/students.html",
+              icon: "🎓",
+              title: "View Students",
+              desc: "View and update student grades",
+            },
+            {
+              href: "/courses.html",
+              icon: "📚",
+              title: "My Courses",
+              desc: "Create and manage your courses",
+            },
+            {
+              href: "/departments.html",
+              icon: "🏛️",
+              title: "Departments",
+              desc: "View department information",
+            },
+          ];
+        } else {
+          const [courses, enrollments, profile] = await Promise.all([
+            api("/api/student/courses"),
+            api("/api/student/my-enrollments"),
+            api("/api/student/profile"),
+          ]);
+          stats = [
+            {
+              icon: "📚",
+              count: courses?.length || 0,
+              label: "Available Courses",
+            },
+            { icon: "📋", count: enrollments?.length || 0, label: "Enrolled" },
+            { icon: "📊", count: profile?.gpa || "-", label: "GPA" },
+          ];
+          links = [
+            {
+              href: "/courses.html",
+              icon: "📚",
+              title: "Browse Courses",
+              desc: "View and enroll in courses",
+            },
+            {
+              href: "/my-enrollments.html",
+              icon: "📋",
+              title: "My Enrollments",
+              desc: "View your enrolled courses",
+            },
+            {
+              href: "/classmates.html",
+              icon: "👥",
+              title: "Classmates",
+              desc: "Connect with department peers",
+            },
+          ];
+        }
+        document.getElementById("statsGrid").innerHTML = stats
+          .map(
+            (s) =>
+              `<div class="stat-card"><div class="icon">${s.icon}</div><h3>${s.count}</h3><p>${s.label}</p></div>`,
+          )
+          .join("");
+        document.getElementById("linksGrid").innerHTML = links
+          .map(
+            (l) =>
+              `<a href="${l.href}" class="link-card"><div class="icon">${l.icon}</div><div><h4>${l.title}</h4><p>${l.desc}</p></div></a>`,
+          )
+          .join("");
+      }
+      function logout() {
+        localStorage.clear();
+        location.href = "/login.html";
+      }
+      loadDashboard();
+    </script>
+  </body>
+</html>

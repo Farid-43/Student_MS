@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Departments - Student MS</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background: #0f0f23;
+        min-height: 100vh;
+        color: #e2e8f0;
+      }
+      .navbar {
+        background: linear-gradient(90deg, #1a1a3e 0%, #0d1b2a 100%);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .navbar h1 {
+        font-size: 1.4em;
+        background: linear-gradient(135deg, #00ffc8, #00b4d8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+      }
+      .navbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .role-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .role-admin {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        color: #fff;
+      }
+      .role-teacher {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #000;
+      }
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: #f43f5e;
+      }
+      .container {
+        display: flex;
+        min-height: calc(100vh - 65px);
+      }
+      .sidebar {
+        width: 240px;
+        background: #1a1a3e;
+        padding: 25px 0;
+        border-right: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 25px;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 14px;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background: rgba(0, 255, 200, 0.05);
+        color: #00ffc8;
+        border-right: 3px solid #00ffc8;
+      }
+      .sidebar .section {
+        padding: 20px 25px 10px;
+        color: #475569;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .main {
+        flex: 1;
+        padding: 30px;
+      }
+      .page-header {
+        margin-bottom: 25px;
+      }
+      .page-header h2 {
+        color: #00ffc8;
+        font-size: 1.5em;
+        margin-bottom: 5px;
+      }
+      .page-header p {
+        color: #64748b;
+      }
+      .card {
+        background: #1a1a3e;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-header h3 {
+        color: #e2e8f0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      th {
+        background: rgba(0, 0, 0, 0.2);
+        color: #94a3b8;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      tr:hover {
+        background: rgba(0, 255, 200, 0.02);
+      }
+      .btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #00ffc8, #00b4d8);
+        color: #0f0f23;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 255, 200, 0.3);
+      }
+      .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #000;
+      }
+      .btn-danger {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        color: #fff;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: #1a1a3e;
+        border: 1px solid rgba(0, 255, 200, 0.2);
+        padding: 30px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 500px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+      .modal-header h3 {
+        color: #00ffc8;
+      }
+      .modal-close {
+        background: none;
+        border: none;
+        color: #64748b;
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 14px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 14px;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: #00ffc8;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 600;
+        z-index: 2000;
+      }
+      .toast.success {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+      .toast.error {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1 onclick="location.href = '/dashboard.html'">🎓 Student MS</h1>
+      <div class="user-info">
+        <span id="userName" style="color: #94a3b8"></span>
+        <span id="userRole" class="role-badge"></span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="sidebar" id="sidebar"></div>
+      <div class="main">
+        <div class="page-header">
+          <h2>🏛️ Departments</h2>
+          <p id="pageDesc">Manage departments</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3>All Departments</h3>
+            <button
+              class="btn btn-primary"
+              id="addBtn"
+              onclick="openModal('addModal')"
+              style="display: none"
+            >
+              + Add Department
+            </button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Head of Dept</th>
+                <th id="actionsHeader">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="addModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add Department</h3>
+          <button class="modal-close" onclick="closeModal('addModal')">
+            &times;
+          </button>
+        </div>
+        <form id="addForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Dept Code</label
+              ><input type="text" name="deptCode" required />
+            </div>
+            <div class="form-group">
+              <label>Head of Dept</label><input type="text" name="headOfDept" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Department Name</label
+            ><input type="text" name="deptName" required />
+          </div>
+          <div class="form-group">
+            <label>Description</label><input type="text" name="description" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Create Department
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Department</h3>
+          <button class="modal-close" onclick="closeModal('editModal')">
+            &times;
+          </button>
+        </div>
+        <form id="editForm">
+          <input type="hidden" id="editId" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Dept Code</label
+              ><input type="text" id="editCode" required />
+            </div>
+            <div class="form-group">
+              <label>Head of Dept</label><input type="text" id="editHead" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Department Name</label
+            ><input type="text" id="editName" required />
+          </div>
+          <div class="form-group">
+            <label>Description</label><input type="text" id="editDesc" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Update Department
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      if (!token || !user) location.href = "/login.html";
+      const roles = user.roles || [];
+      const isAdmin = roles.includes("ROLE_ADMIN");
+      const isTeacher = roles.includes("ROLE_TEACHER");
+
+      document.getElementById("userName").textContent = user.username;
+      const roleEl = document.getElementById("userRole");
+      if (isAdmin) {
+        roleEl.textContent = "Admin";
+        roleEl.classList.add("role-admin");
+      } else if (isTeacher) {
+        roleEl.textContent = "Teacher";
+        roleEl.classList.add("role-teacher");
+      }
+
+      let sidebarHTML = '<a href="/dashboard.html">📊 Dashboard</a>';
+      if (isAdmin) {
+        sidebarHTML +=
+          '<div class="section">Management</div><a href="/students.html">🎓 Students</a><a href="/teachers.html">👨‍🏫 Teachers</a><a href="/courses.html">📚 Courses</a><a href="/departments.html" class="active">🏛️ Departments</a><a href="/users.html">👥 Users</a>';
+      } else if (isTeacher) {
+        sidebarHTML +=
+          '<div class="section">Teaching</div><a href="/students.html">🎓 Students</a><a href="/courses.html">📚 My Courses</a><a href="/departments.html" class="active">🏛️ Departments</a>';
+      }
+      sidebarHTML +=
+        '<div class="section">Account</div><a href="/profile.html">👤 Profile</a>';
+      document.getElementById("sidebar").innerHTML = sidebarHTML;
+
+      if (isAdmin) {
+        document.getElementById("addBtn").style.display = "block";
+        document.getElementById("pageDesc").textContent =
+          "Full CRUD access to departments";
+      } else {
+        document.getElementById("pageDesc").textContent = "View departments";
+        document.getElementById("actionsHeader").style.display = "none";
+      }
+
+      async function api(url, method = "GET", body = null) {
+        const opts = {
+          method,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(url, opts);
+        if (res.status === 401) {
+          logout();
+          return null;
+        }
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.message || "Error");
+        }
+        if (res.status === 204) return {};
+        return res.json();
+      }
+
+      async function loadData() {
+        const endpoint = isAdmin
+          ? "/api/admin/departments"
+          : "/api/teacher/departments";
+        const depts = (await api(endpoint)) || [];
+        document.getElementById("dataTable").innerHTML =
+          depts
+            .map(
+              (d) => `
+                <tr>
+                    <td>${d.id}</td>
+                    <td style="color:#00ffc8">${d.deptCode}</td>
+                    <td>${d.deptName}</td>
+                    <td style="color:#64748b">${d.description || "-"}</td>
+                    <td>${d.headOfDept || "-"}</td>
+                    ${isAdmin ? `<td><button class="btn btn-warning btn-sm" onclick="openEdit(${d.id})">Edit</button> <button class="btn btn-danger btn-sm" onclick="deleteDept(${d.id})">Delete</button></td>` : ""}
+                </tr>
+            `,
+            )
+            .join("") ||
+          '<tr><td colspan="6" style="text-align:center;padding:40px;color:#64748b">No departments found</td></tr>';
+      }
+
+      document
+        .getElementById("addForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const data = {
+            deptCode: form.deptCode.value,
+            deptName: form.deptName.value,
+            description: form.description.value,
+            headOfDept: form.headOfDept.value,
+          };
+          try {
+            await api("/api/admin/departments", "POST", data);
+            showToast("Department created!");
+            closeModal("addModal");
+            form.reset();
+            loadData();
+          } catch (e) {
+            showToast(e.message, "error");
+          }
+        });
+
+      async function openEdit(id) {
+        const dept = await api("/api/admin/departments/" + id);
+        document.getElementById("editId").value = dept.id;
+        document.getElementById("editCode").value = dept.deptCode;
+        document.getElementById("editName").value = dept.deptName;
+        document.getElementById("editDesc").value = dept.description || "";
+        document.getElementById("editHead").value = dept.headOfDept || "";
+        openModal("editModal");
+      }
+
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("editId").value;
+          const data = {
+            deptCode: document.getElementById("editCode").value,
+            deptName: document.getElementById("editName").value,
+            description: document.getElementById("editDesc").value,
+            headOfDept: document.getElementById("editHead").value,
+          };
+          try {
+            await api("/api/admin/departments/" + id, "PUT", data);
+            showToast("Department updated!");
+            closeModal("editModal");
+            loadData();
+          } catch (e) {
+            showToast(e.message, "error");
+          }
+        });
+
+      async function deleteDept(id) {
+        if (!confirm("Delete this department?")) return;
+        try {
+          await api("/api/admin/departments/" + id, "DELETE");
+          showToast("Department deleted");
+          loadData();
+        } catch (e) {
+          showToast(e.message, "error");
+        }
+      }
+
+      function openModal(id) {
+        document.getElementById(id).classList.add("active");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("active");
+      }
+      function showToast(msg, type = "success") {
+        const t = document.createElement("div");
+        t.className = "toast " + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      }
+      function logout() {
+        localStorage.clear();
+        location.href = "/login.html";
+      }
+      document.querySelectorAll(".modal").forEach((m) =>
+        m.addEventListener("click", (e) => {
+          if (e.target === m) m.classList.remove("active");
+        }),
+      );
+
+      loadData();
+    </script>
+  </body>
+</html>

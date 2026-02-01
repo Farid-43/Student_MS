@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student MS - API Tester</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: #1a1a2e;
+        color: #eee;
+        min-height: 100vh;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 1.8em;
+      }
+      .header p {
+        opacity: 0.9;
+        margin-top: 5px;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 20px;
+      }
+      .sidebar {
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+      }
+      .card {
+        background: #16213e;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #0f3460;
+      }
+      .card h3 {
+        color: #e94560;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .form-group {
+        margin-bottom: 12px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #aaa;
+        font-size: 0.9em;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #0f3460;
+        border-radius: 6px;
+        background: #1a1a2e;
+        color: #fff;
+        font-size: 14px;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #e94560;
+      }
+      button {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+        margin: 3px;
+      }
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #5a6fd6;
+      }
+      .btn-success {
+        background: #10b981;
+        color: white;
+      }
+      .btn-success:hover {
+        background: #059669;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+      .btn-warning {
+        background: #f59e0b;
+        color: #000;
+      }
+      .btn-warning:hover {
+        background: #d97706;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-connected {
+        background: #10b981;
+        color: white;
+      }
+      .status-disconnected {
+        background: #ef4444;
+        color: white;
+      }
+      .token-box {
+        background: #0f3460;
+        padding: 10px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 11px;
+        word-break: break-all;
+        max-height: 80px;
+        overflow-y: auto;
+        color: #10b981;
+      }
+      .role-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+      .role-admin {
+        background: #e94560;
+        color: white;
+      }
+      .role-teacher {
+        background: #f59e0b;
+        color: #000;
+      }
+      .role-student {
+        background: #10b981;
+        color: white;
+      }
+      .role-public {
+        background: #6b7280;
+        color: white;
+      }
+      .tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .tab {
+        padding: 8px 16px;
+        background: #0f3460;
+        border: none;
+        color: #aaa;
+        cursor: pointer;
+        border-radius: 6px 6px 0 0;
+        font-size: 13px;
+      }
+      .tab.active {
+        background: #e94560;
+        color: white;
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .endpoint-group {
+        background: #0f3460;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      .endpoint-group h4 {
+        color: #667eea;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+      .endpoint-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .method-badge {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        min-width: 50px;
+        text-align: center;
+      }
+      .method-get {
+        background: #10b981;
+        color: white;
+      }
+      .method-post {
+        background: #3b82f6;
+        color: white;
+      }
+      .method-put {
+        background: #f59e0b;
+        color: #000;
+      }
+      .method-delete {
+        background: #ef4444;
+        color: white;
+      }
+      .endpoint-path {
+        font-family: monospace;
+        color: #aaa;
+        font-size: 12px;
+      }
+      .response-box {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 15px;
+        font-family: "Fira Code", monospace;
+        font-size: 13px;
+        white-space: pre-wrap;
+        max-height: 400px;
+        overflow-y: auto;
+        color: #c9d1d9;
+      }
+      .response-box.error {
+        border-color: #f85149;
+        color: #f85149;
+      }
+      .response-box.success {
+        border-color: #3fb950;
+      }
+      .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .input-row input {
+        flex: 1;
+      }
+      .quick-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+      .user-info {
+        background: #0f3460;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+      .user-info strong {
+        color: #e94560;
+      }
+      .divider {
+        border-top: 1px solid #0f3460;
+        margin: 15px 0;
+      }
+      @media (max-width: 900px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .sidebar {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🎓 Student Management System</h1>
+      <p>REST API Tester with Role-Based Access Control</p>
+    </div>
+
+    <div class="container">
+      <div class="grid-2">
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Connection -->
+          <div class="card">
+            <h3>⚙️ Connection</h3>
+            <div class="form-group">
+              <label>API Base URL</label>
+              <input type="text" id="baseUrl" value="http://localhost:9090" />
+            </div>
+            <button class="btn-primary" onclick="checkConnection()">
+              Check Connection
+            </button>
+            <span id="connectionStatus" class="status-badge status-disconnected"
+              >Disconnected</span
+            >
+          </div>
+
+          <!-- Authentication -->
+          <div class="card">
+            <h3>🔐 Authentication</h3>
+            <div id="currentUser" class="user-info" style="display: none">
+              <strong>Logged in as:</strong> <span id="loggedUsername">-</span>
+              <br /><strong>Roles:</strong> <span id="loggedRoles">-</span>
+            </div>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="loginUsername" value="admin" />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="loginPassword" value="admin123" />
+            </div>
+            <button class="btn-success" onclick="login()">🔑 Login</button>
+            <button class="btn-danger" onclick="logout()">Logout</button>
+
+            <div class="divider"></div>
+            <label style="color: #aaa; font-size: 12px">Quick Login:</label>
+            <div class="quick-actions">
+              <button
+                class="btn-sm btn-danger"
+                onclick="quickLogin('admin', 'admin123')"
+              >
+                Admin
+              </button>
+              <button
+                class="btn-sm btn-warning"
+                onclick="quickLogin('teacher1', 'admin123')"
+              >
+                Teacher
+              </button>
+              <button
+                class="btn-sm btn-success"
+                onclick="quickLogin('student1', 'admin123')"
+              >
+                Student
+              </button>
+            </div>
+
+            <div class="divider"></div>
+            <label style="color: #aaa; font-size: 12px">JWT Token:</label>
+            <div id="tokenDisplay" class="token-box">No token</div>
+          </div>
+
+          <!-- Register -->
+          <div class="card">
+            <h3>📝 Register User</h3>
+            <div class="form-group">
+              <input type="text" id="regUsername" placeholder="Username" />
+            </div>
+            <div class="form-group">
+              <input type="email" id="regEmail" placeholder="Email" />
+            </div>
+            <div class="form-group">
+              <input type="password" id="regPassword" placeholder="Password" />
+            </div>
+            <div class="input-row">
+              <input type="text" id="regFirstName" placeholder="First Name" />
+              <input type="text" id="regLastName" placeholder="Last Name" />
+            </div>
+            <button class="btn-primary" onclick="register()">Register</button>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <!-- Role Tabs -->
+          <div class="card">
+            <div class="tabs">
+              <button class="tab active" onclick="showRoleTab('public')">
+                🌐 Public
+              </button>
+              <button class="tab" onclick="showRoleTab('admin')">
+                👑 Admin
+              </button>
+              <button class="tab" onclick="showRoleTab('teacher')">
+                👨‍🏫 Teacher
+              </button>
+              <button class="tab" onclick="showRoleTab('student')">
+                🎓 Student
+              </button>
+            </div>
+
+            <!-- PUBLIC TAB -->
+            <div id="tab-public" class="tab-content active">
+              <div class="endpoint-group">
+                <h4>
+                  Public Endpoints
+                  <span class="role-badge role-public">No Auth Required</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/public/info</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/public/info', 'GET', null, false)"
+                  >
+                    Test
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/public/health</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/public/health', 'GET', null, false)"
+                  >
+                    Test
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/api/auth/login</span>
+                  <span style="color: #aaa; font-size: 12px"
+                    >Use the login form</span
+                  >
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/api/auth/register</span>
+                  <span style="color: #aaa; font-size: 12px"
+                    >Use the register form</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- ADMIN TAB -->
+            <div id="tab-admin" class="tab-content">
+              <div class="endpoint-group">
+                <h4>
+                  User Management
+                  <span class="role-badge role-admin">ADMIN Only</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/admin/users</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/admin/users')"
+                  >
+                    Get All Users
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/admin/users/{id}</span>
+                  <input
+                    type="number"
+                    id="userId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall('/api/admin/users/' + getEl('userId').value)
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-delete">DELETE</span>
+                  <span class="endpoint-path">/api/admin/users/{id}</span>
+                  <input
+                    type="number"
+                    id="deleteUserId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <button
+                    class="btn-sm btn-danger"
+                    onclick="
+                      apiCall(
+                        '/api/admin/users/' + getEl('deleteUserId').value,
+                        'DELETE',
+                      )
+                    "
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  Student Management
+                  <span class="role-badge role-admin">ADMIN Only</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/admin/students</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/admin/students')"
+                  >
+                    Get All Students
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/api/admin/students</span>
+                  <button
+                    class="btn-sm btn-success"
+                    onclick="toggleForm('createStudentForm')"
+                  >
+                    + Create Student
+                  </button>
+                </div>
+                <div
+                  id="createStudentForm"
+                  style="display: none; margin-top: 10px"
+                >
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="stuUsername"
+                      placeholder="Username"
+                    />
+                    <input type="email" id="stuEmail" placeholder="Email" />
+                    <input
+                      type="password"
+                      id="stuPassword"
+                      placeholder="Password"
+                    />
+                  </div>
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="stuFirstName"
+                      placeholder="First Name"
+                    />
+                    <input
+                      type="text"
+                      id="stuLastName"
+                      placeholder="Last Name"
+                    />
+                    <input
+                      type="text"
+                      id="stuStudentId"
+                      placeholder="Student ID (STU001)"
+                    />
+                  </div>
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="stuDepartment"
+                      placeholder="Department"
+                    />
+                    <input
+                      type="number"
+                      id="stuSemester"
+                      placeholder="Semester"
+                      value="1"
+                    />
+                  </div>
+                  <button class="btn-success" onclick="createStudent()">
+                    Create Student
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  Teacher Management
+                  <span class="role-badge role-admin">ADMIN Only</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/admin/teachers</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/admin/teachers')"
+                  >
+                    Get All Teachers
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/api/admin/teachers</span>
+                  <button
+                    class="btn-sm btn-success"
+                    onclick="toggleForm('createTeacherForm')"
+                  >
+                    + Create Teacher
+                  </button>
+                </div>
+                <div
+                  id="createTeacherForm"
+                  style="display: none; margin-top: 10px"
+                >
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="teaUsername"
+                      placeholder="Username"
+                    />
+                    <input type="email" id="teaEmail" placeholder="Email" />
+                    <input
+                      type="password"
+                      id="teaPassword"
+                      placeholder="Password"
+                    />
+                  </div>
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="teaFirstName"
+                      placeholder="First Name"
+                    />
+                    <input
+                      type="text"
+                      id="teaLastName"
+                      placeholder="Last Name"
+                    />
+                    <input
+                      type="text"
+                      id="teaEmployeeId"
+                      placeholder="Employee ID (EMP001)"
+                    />
+                  </div>
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="teaDepartment"
+                      placeholder="Department"
+                    />
+                    <input
+                      type="text"
+                      id="teaDesignation"
+                      placeholder="Designation"
+                    />
+                  </div>
+                  <button class="btn-success" onclick="createTeacher()">
+                    Create Teacher
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  Course Management
+                  <span class="role-badge role-admin">ADMIN Only</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/admin/courses</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/admin/courses')"
+                  >
+                    Get All Courses
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/api/admin/courses</span>
+                  <button
+                    class="btn-sm btn-success"
+                    onclick="toggleForm('createCourseForm')"
+                  >
+                    + Create Course
+                  </button>
+                </div>
+                <div
+                  id="createCourseForm"
+                  style="display: none; margin-top: 10px"
+                >
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="courseCode"
+                      placeholder="Course Code (CS101)"
+                    />
+                    <input
+                      type="text"
+                      id="courseName"
+                      placeholder="Course Name"
+                    />
+                  </div>
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="courseDesc"
+                      placeholder="Description"
+                    />
+                    <input
+                      type="number"
+                      id="courseCredits"
+                      placeholder="Credits"
+                      value="3"
+                    />
+                    <input
+                      type="number"
+                      id="courseTeacherId"
+                      placeholder="Teacher ID (optional)"
+                    />
+                  </div>
+                  <button class="btn-success" onclick="createCourse()">
+                    Create Course
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TEACHER TAB -->
+            <div id="tab-teacher" class="tab-content">
+              <div class="endpoint-group">
+                <h4>
+                  View Students
+                  <span class="role-badge role-teacher">ADMIN or TEACHER</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/teacher/students</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/teacher/students')"
+                  >
+                    Get All Students
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/teacher/students/{id}</span>
+                  <input
+                    type="number"
+                    id="teacherViewStudentId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall(
+                        '/api/teacher/students/' +
+                          getEl('teacherViewStudentId').value,
+                      )
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path"
+                    >/api/teacher/students/by-student-id/{studentId}</span
+                  >
+                  <input
+                    type="text"
+                    id="teacherViewStudentCode"
+                    placeholder="STU001"
+                    style="width: 100px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall(
+                        '/api/teacher/students/by-student-id/' +
+                          getEl('teacherViewStudentCode').value,
+                      )
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  Course Management
+                  <span class="role-badge role-teacher">ADMIN or TEACHER</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/teacher/courses</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/teacher/courses')"
+                  >
+                    Get All Courses
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/teacher/my-courses</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/teacher/my-courses')"
+                  >
+                    Get My Courses
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/teacher/courses/{id}</span>
+                  <input
+                    type="number"
+                    id="teacherCourseId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall(
+                        '/api/teacher/courses/' +
+                          getEl('teacherCourseId').value,
+                      )
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  Update Student
+                  <span class="role-badge role-teacher">ADMIN or TEACHER</span>
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-put">PUT</span>
+                  <span class="endpoint-path">/api/teacher/students/{id}</span>
+                  <input
+                    type="number"
+                    id="teacherUpdateStudentId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <input
+                    type="number"
+                    id="teacherUpdateGpa"
+                    placeholder="New GPA"
+                    step="0.01"
+                    style="width: 100px"
+                  />
+                  <button
+                    class="btn-sm btn-warning"
+                    onclick="updateStudentGpa()"
+                  >
+                    Update GPA
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- STUDENT TAB -->
+            <div id="tab-student" class="tab-content">
+              <div class="endpoint-group">
+                <h4>
+                  My Profile
+                  <span class="role-badge role-student"
+                    >ADMIN, TEACHER, or STUDENT</span
+                  >
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/student/profile</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/student/profile')"
+                  >
+                    Get My Profile
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-put">PUT</span>
+                  <span class="endpoint-path">/api/student/profile</span>
+                  <button
+                    class="btn-sm btn-warning"
+                    onclick="toggleForm('updateProfileForm')"
+                  >
+                    Update Profile
+                  </button>
+                </div>
+                <div
+                  id="updateProfileForm"
+                  style="display: none; margin-top: 10px"
+                >
+                  <div class="input-row">
+                    <input
+                      type="text"
+                      id="profileFirstName"
+                      placeholder="First Name"
+                    />
+                    <input
+                      type="text"
+                      id="profileLastName"
+                      placeholder="Last Name"
+                    />
+                  </div>
+                  <button class="btn-warning" onclick="updateProfile()">
+                    Update
+                  </button>
+                </div>
+              </div>
+
+              <div class="endpoint-group">
+                <h4>
+                  View Courses
+                  <span class="role-badge role-student"
+                    >ADMIN, TEACHER, or STUDENT</span
+                  >
+                </h4>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/student/courses</span>
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="apiCall('/api/student/courses')"
+                  >
+                    Get All Courses
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/api/student/courses/{id}</span>
+                  <input
+                    type="number"
+                    id="studentCourseId"
+                    placeholder="ID"
+                    style="width: 80px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall(
+                        '/api/student/courses/' +
+                          getEl('studentCourseId').value,
+                      )
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+                <div class="endpoint-row">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path"
+                    >/api/student/courses/by-code/{code}</span
+                  >
+                  <input
+                    type="text"
+                    id="studentCourseCode"
+                    placeholder="CS101"
+                    style="width: 100px"
+                  />
+                  <button
+                    class="btn-sm btn-primary"
+                    onclick="
+                      apiCall(
+                        '/api/student/courses/by-code/' +
+                          getEl('studentCourseCode').value,
+                      )
+                    "
+                  >
+                    Get
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Response -->
+          <div class="card">
+            <h3>📤 API Response</h3>
+            <div id="response" class="response-box">
+              Click any endpoint to see the response here...
+            </div>
+          </div>
+
+          <!-- Role Access Demo -->
+          <div class="card">
+            <h3>🔒 Role-Based Access Demo</h3>
+            <p style="color: #aaa; margin-bottom: 15px">
+              Test what happens when you access endpoints with different roles:
+            </p>
+            <div class="quick-actions">
+              <button
+                class="btn-sm btn-danger"
+                onclick="testAccess('/api/admin/users', 'Admin endpoint')"
+              >
+                Test Admin Access
+              </button>
+              <button
+                class="btn-sm btn-warning"
+                onclick="
+                  testAccess('/api/teacher/students', 'Teacher endpoint')
+                "
+              >
+                Test Teacher Access
+              </button>
+              <button
+                class="btn-sm btn-success"
+                onclick="testAccess('/api/student/courses', 'Student endpoint')"
+              >
+                Test Student Access
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Helper function for getting elements
+      function getEl(id) {
+        return document.getElementById(id);
+      }
+
+      let token = localStorage.getItem("jwt_token") || "";
+      let currentUser = JSON.parse(
+        localStorage.getItem("current_user") || "null",
+      );
+
+      // Initialize
+      updateTokenDisplay();
+      updateUserDisplay();
+
+      function getBaseUrl() {
+        return getEl("baseUrl").value;
+      }
+
+      function updateTokenDisplay() {
+        getEl("tokenDisplay").textContent = token
+          ? token.substring(0, 80) + "..."
+          : "No token";
+      }
+
+      function updateUserDisplay() {
+        if (currentUser) {
+          getEl("currentUser").style.display = "block";
+          getEl("loggedUsername").textContent = currentUser.username;
+          getEl("loggedRoles").textContent = currentUser.roles
+            ? currentUser.roles.join(", ")
+            : "N/A";
+        } else {
+          getEl("currentUser").style.display = "none";
+        }
+      }
+
+      function showResponse(data, isError = false) {
+        const responseDiv = getEl("response");
+        responseDiv.textContent =
+          typeof data === "object" ? JSON.stringify(data, null, 2) : data;
+        responseDiv.className =
+          "response-box" + (isError ? " error" : " success");
+      }
+
+      async function apiCall(
+        endpoint,
+        method = "GET",
+        body = null,
+        useAuth = true,
+      ) {
+        const headers = { "Content-Type": "application/json" };
+        if (useAuth && token) {
+          headers["Authorization"] = "Bearer " + token;
+        }
+
+        try {
+          const options = { method, headers };
+          if (body) options.body = JSON.stringify(body);
+
+          showResponse("Calling " + method + " " + endpoint + "...");
+
+          const response = await fetch(getBaseUrl() + endpoint, options);
+          const data = await response.json();
+
+          if (!response.ok) {
+            showResponse({ status: response.status, ...data }, true);
+            return null;
+          }
+
+          showResponse(data);
+          return data;
+        } catch (error) {
+          showResponse({ error: error.message }, true);
+          return null;
+        }
+      }
+
+      async function checkConnection() {
+        const status = getEl("connectionStatus");
+        try {
+          const response = await fetch(getBaseUrl() + "/api/public/health");
+          const data = await response.json();
+          status.textContent = "Connected";
+          status.className = "status-badge status-connected";
+          showResponse(data);
+        } catch (error) {
+          status.textContent = "Disconnected";
+          status.className = "status-badge status-disconnected";
+          showResponse(
+            { error: "Cannot connect to server. Is it running?" },
+            true,
+          );
+        }
+      }
+
+      async function login() {
+        const username = getEl("loginUsername").value;
+        const password = getEl("loginPassword").value;
+
+        const data = await apiCall(
+          "/api/auth/login",
+          "POST",
+          { username, password },
+          false,
+        );
+        if (data && data.token) {
+          token = data.token;
+          currentUser = { username: data.username, roles: data.roles };
+          localStorage.setItem("jwt_token", token);
+          localStorage.setItem("current_user", JSON.stringify(currentUser));
+          updateTokenDisplay();
+          updateUserDisplay();
+          showResponse({ message: "✅ Login successful!", ...data });
+        }
+      }
+
+      async function quickLogin(username, password) {
+        getEl("loginUsername").value = username;
+        getEl("loginPassword").value = password;
+        await login();
+      }
+
+      function logout() {
+        token = "";
+        currentUser = null;
+        localStorage.removeItem("jwt_token");
+        localStorage.removeItem("current_user");
+        updateTokenDisplay();
+        updateUserDisplay();
+        showResponse({ message: "Logged out successfully" });
+      }
+
+      async function register() {
+        const body = {
+          username: getEl("regUsername").value,
+          email: getEl("regEmail").value,
+          password: getEl("regPassword").value,
+          firstName: getEl("regFirstName").value,
+          lastName: getEl("regLastName").value,
+        };
+        await apiCall("/api/auth/register", "POST", body, false);
+      }
+
+      // Tab navigation
+      function showRoleTab(tab) {
+        document.querySelectorAll(".tab-content").forEach(function (el) {
+          el.classList.remove("active");
+        });
+        document.querySelectorAll(".tab").forEach(function (el) {
+          el.classList.remove("active");
+        });
+        getEl("tab-" + tab).classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      // Toggle forms
+      function toggleForm(id) {
+        const form = getEl(id);
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+
+      // Create operations
+      async function createStudent() {
+        const body = {
+          username: getEl("stuUsername").value,
+          email: getEl("stuEmail").value,
+          password: getEl("stuPassword").value,
+          firstName: getEl("stuFirstName").value,
+          lastName: getEl("stuLastName").value,
+          studentId: getEl("stuStudentId").value,
+          department: getEl("stuDepartment").value,
+          semester: parseInt(getEl("stuSemester").value) || 1,
+        };
+        await apiCall("/api/admin/students", "POST", body);
+      }
+
+      async function createTeacher() {
+        const body = {
+          username: getEl("teaUsername").value,
+          email: getEl("teaEmail").value,
+          password: getEl("teaPassword").value,
+          firstName: getEl("teaFirstName").value,
+          lastName: getEl("teaLastName").value,
+          employeeId: getEl("teaEmployeeId").value,
+          department: getEl("teaDepartment").value,
+          designation: getEl("teaDesignation").value,
+        };
+        await apiCall("/api/admin/teachers", "POST", body);
+      }
+
+      async function createCourse() {
+        const body = {
+          courseCode: getEl("courseCode").value,
+          courseName: getEl("courseName").value,
+          description: getEl("courseDesc").value,
+          credits: parseInt(getEl("courseCredits").value) || 3,
+          teacherId: parseInt(getEl("courseTeacherId").value) || null,
+        };
+        await apiCall("/api/admin/courses", "POST", body);
+      }
+
+      async function updateStudentGpa() {
+        const id = getEl("teacherUpdateStudentId").value;
+        const gpa = parseFloat(getEl("teacherUpdateGpa").value);
+        if (!id) {
+          showResponse({ error: "Please enter student ID" }, true);
+          return;
+        }
+
+        // First get the student, then update
+        const student = await apiCall("/api/teacher/students/" + id);
+        if (student) {
+          student.gpa = gpa;
+          await apiCall("/api/teacher/students/" + id, "PUT", student);
+        }
+      }
+
+      async function updateProfile() {
+        const body = {
+          firstName: getEl("profileFirstName").value,
+          lastName: getEl("profileLastName").value,
+        };
+        await apiCall("/api/student/profile", "PUT", body);
+      }
+
+      async function testAccess(endpoint, name) {
+        var userInfo = currentUser
+          ? currentUser.username +
+            " (" +
+            (currentUser.roles ? currentUser.roles.join(", ") : "no roles") +
+            ")"
+          : "Not logged in";
+        showResponse(
+          "Testing access to " +
+            name +
+            "...\nYou are logged in as: " +
+            userInfo +
+            "\n\nCalling " +
+            endpoint +
+            "...",
+        );
+        setTimeout(function () {
+          apiCall(endpoint);
+        }, 500);
+      }
+
+      // Check connection on load
+      setTimeout(checkConnection, 500);
+    </script>
+  </body>
+</html>

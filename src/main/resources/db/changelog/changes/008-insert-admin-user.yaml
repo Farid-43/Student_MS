@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-insert-admin-user
+      author: system
+      comment: Insert default admin user with password 'admin123' (BCrypt encoded)
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: email
+                  value: admin@studentms.com
+              - column:
+                  name: password
+                  value: $2a$10$N9qo8uLOickgx2ZMRZoMye1S5Y3ZsQOZQJrK2qHnPqUHSVx1qDl7O
+              - column:
+                  name: first_name
+                  value: System
+              - column:
+                  name: last_name
+                  value: Admin
+              - column:
+                  name: enabled
+                  valueBoolean: true
+        - insert:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_id
+                  valueNumeric: 1

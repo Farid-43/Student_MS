@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teachers - Student MS</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background: #0f0f23;
+        min-height: 100vh;
+        color: #e2e8f0;
+      }
+      .navbar {
+        background: linear-gradient(90deg, #1a1a3e 0%, #0d1b2a 100%);
+        padding: 16px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .navbar h1 {
+        font-size: 1.4em;
+        background: linear-gradient(135deg, #00ffc8, #00b4d8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+      }
+      .navbar .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .role-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        color: #fff;
+      }
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: #f43f5e;
+      }
+      .container {
+        display: flex;
+        min-height: calc(100vh - 65px);
+      }
+      .sidebar {
+        width: 240px;
+        background: #1a1a3e;
+        padding: 25px 0;
+        border-right: 1px solid rgba(0, 255, 200, 0.1);
+      }
+      .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 25px;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-size: 14px;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background: rgba(0, 255, 200, 0.05);
+        color: #00ffc8;
+        border-right: 3px solid #00ffc8;
+      }
+      .sidebar .section {
+        padding: 20px 25px 10px;
+        color: #475569;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      .main {
+        flex: 1;
+        padding: 30px;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+      .page-header h2 {
+        color: #00ffc8;
+        font-size: 1.5em;
+      }
+      .card {
+        background: #1a1a3e;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .card-header h3 {
+        color: #e2e8f0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 16px 20px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      th {
+        background: rgba(0, 0, 0, 0.2);
+        color: #94a3b8;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      tr:hover {
+        background: rgba(0, 255, 200, 0.02);
+      }
+      .btn {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #00ffc8, #00b4d8);
+        color: #0f0f23;
+      }
+      .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+      }
+      .btn-danger {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+        color: #fff;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+      }
+      .modal-content {
+        background: #1a1a3e;
+        border: 1px solid rgba(0, 255, 200, 0.2);
+        border-radius: 16px;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+      .modal-header h3 {
+        color: #00ffc8;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        color: #64748b;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        color: #94a3b8;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        color: #e2e8f0;
+        font-size: 14px;
+      }
+      .form-group input:focus {
+        outline: none;
+        border-color: #00ffc8;
+        box-shadow: 0 0 0 3px rgba(0, 255, 200, 0.1);
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 10px;
+        color: #fff;
+        font-weight: 600;
+        z-index: 2000;
+      }
+      .toast.success {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+      .toast.error {
+        background: linear-gradient(135deg, #f43f5e, #e11d48);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1 onclick="location.href = '/dashboard.html'">🎓 Student MS</h1>
+      <div class="user-info">
+        <span id="userName" style="color: #94a3b8"></span>
+        <span class="role-badge">Admin</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="sidebar">
+        <a href="/dashboard.html">📊 Dashboard</a>
+        <div class="section">Management</div>
+        <a href="/students.html">👨‍🎓 Students</a>
+        <a href="/teachers.html" class="active">👨‍🏫 Teachers</a>
+        <a href="/courses.html">📚 Courses</a>
+        <a href="/departments.html">🏛️ Departments</a>
+        <a href="/users.html">👥 Users</a>
+        <div class="section">Account</div>
+        <a href="/profile.html">👤 Profile</a>
+      </div>
+      <div class="main">
+        <div class="page-header">
+          <h2>👨‍🏫 Teachers</h2>
+          <button class="btn btn-primary" onclick="openModal()">
+            + Add Teacher
+          </button>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>All Teachers</h3></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Teacher ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Add Teacher</h3>
+          <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <form id="form">
+          <input type="hidden" id="teacherId" />
+          <div class="form-group" id="usernameGroup">
+            <label>Username</label><input type="text" id="username" required />
+          </div>
+          <div class="form-group" id="passwordGroup">
+            <label>Password</label><input type="password" id="password" />
+          </div>
+          <div class="form-group">
+            <label>Teacher ID (Employee ID)</label
+            ><input type="text" id="teacherIdField" required />
+          </div>
+          <div class="form-group">
+            <label>First Name</label
+            ><input type="text" id="firstName" required />
+          </div>
+          <div class="form-group">
+            <label>Last Name</label><input type="text" id="lastName" required />
+          </div>
+          <div class="form-group">
+            <label>Email</label><input type="email" id="email" required />
+          </div>
+          <div class="form-group">
+            <label>Department</label><input type="text" id="department" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Save
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      if (!token || !user) location.href = "/login.html";
+      if (!(user.roles || []).some((r) => r.includes("ADMIN")))
+        location.href = "/dashboard.html";
+
+      document.getElementById("userName").textContent = user.username;
+
+      async function api(url, method = "GET", body = null) {
+        const opts = {
+          method,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch(url, opts);
+        if (res.status === 401) {
+          logout();
+          return null;
+        }
+        if (!res.ok) return null;
+        if (res.status === 204) return {};
+        return res.json();
+      }
+
+      async function loadData() {
+        const teachers = (await api("/api/admin/teachers")) || [];
+        document.getElementById("dataTable").innerHTML =
+          teachers
+            .map(
+              (t) => `
+                <tr>
+                    <td style="color:#00ffc8">${t.teacherId || "-"}</td>
+                    <td>${t.firstName || ""} ${t.lastName || ""}</td>
+                    <td style="color:#64748b">${t.email || "-"}</td>
+                    <td>${t.department || "-"}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="edit(${t.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="del(${t.id})">Delete</button>
+                    </td>
+                </tr>
+            `,
+            )
+            .join("") ||
+          '<tr><td colspan="5" style="text-align:center;padding:40px;color:#64748b">No teachers found</td></tr>';
+      }
+
+      function openModal() {
+        document.getElementById("modal").style.display = "flex";
+        document.getElementById("modalTitle").textContent = "Add Teacher";
+        document.getElementById("form").reset();
+        document.getElementById("teacherId").value = "";
+        document.getElementById("usernameGroup").style.display = "block";
+        document.getElementById("passwordGroup").style.display = "block";
+        document.getElementById("password").required = true;
+      }
+
+      function closeModal() {
+        document.getElementById("modal").style.display = "none";
+      }
+
+      async function edit(id) {
+        const t = await api("/api/admin/teachers/" + id);
+        if (!t) return;
+        document.getElementById("teacherId").value = t.id;
+        document.getElementById("teacherIdField").value = t.teacherId || "";
+        document.getElementById("firstName").value = t.firstName || "";
+        document.getElementById("lastName").value = t.lastName || "";
+        document.getElementById("email").value = t.email || "";
+        document.getElementById("department").value = t.department || "";
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+        document.getElementById("usernameGroup").style.display = "none";
+        document.getElementById("passwordGroup").style.display = "none";
+        document.getElementById("password").required = false;
+        document.getElementById("modalTitle").textContent = "Edit Teacher";
+        document.getElementById("modal").style.display = "flex";
+      }
+
+      async function del(id) {
+        if (!confirm("Delete this teacher?")) return;
+        await api("/api/admin/teachers/" + id, "DELETE");
+        showToast("Teacher deleted");
+        loadData();
+      }
+
+      document.getElementById("form").onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("teacherId").value;
+        const data = {
+          employeeId: document.getElementById("teacherIdField").value,
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          email: document.getElementById("email").value,
+          department: document.getElementById("department").value,
+        };
+        if (id) {
+          await api("/api/admin/teachers/" + id, "PUT", data);
+          showToast("Teacher updated");
+        } else {
+          data.username = document.getElementById("username").value;
+          data.password = document.getElementById("password").value;
+          await api("/api/admin/teachers", "POST", data);
+          showToast("Teacher created");
+        }
+        closeModal();
+        loadData();
+      };
+
+      function showToast(msg, type = "success") {
+        const t = document.createElement("div");
+        t.className = "toast " + type;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+      }
+      function logout() {
+        localStorage.clear();
+        location.href = "/login.html";
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>
