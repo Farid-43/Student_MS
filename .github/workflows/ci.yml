@@ -51,6 +51,10 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-maven-
 
+            # 3.5 Make Maven wrapper executable
+            - name: Make mvnw executable
+              run: chmod +x ./mvnw
+
             # 4. Build the project (compile only, skip tests for now)
             - name: Build with Maven
               run: ./mvnw compile -B
