@@ -31,5 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local files ###
+test-output.txt
 explain.md
 qna.md
+BRANCH_PROTECTION.md
